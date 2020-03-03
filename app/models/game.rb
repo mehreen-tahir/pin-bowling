@@ -14,12 +14,25 @@ class Game < ApplicationRecord
   end
 
   def verify_input(input)
-    return [false, 'Input is invalid'] if (open_frame.first_roll.to_i + input > Frame::MAX_PINS) || input < 0
+    return [false, 'Input is invalid'] if input.blank? || (open_frame.first_roll.to_i + input > Frame::MAX_PINS) || input < 0
     return [false, 'Game over, Max Frame limit is reached'] if frames_limit_reached?
 
     #TODO handle bonus round balls
     true
   end
+
+  def self.current_game
+    Game.ordered_by_time.last
+  end
+
+  def self.create_new_game
+    game = Game.new
+    game.save
+
+    game.frames.build(number: 1).save if game.present?
+  end
+
+  private
 
   def frames_limit_reached?
     return false if open_frame.number < TOTAL_FRAMES

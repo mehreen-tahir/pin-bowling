@@ -22,7 +22,7 @@ class GameScoreUpdater < ApplicationService
 
     @game.frames.build(number: @open_frame.number + 1).save! if create_new_frame_if_required
 
-    true
+    [true, "Game Score Updated"]
     rescue => e
       raise e
       [false, "Score not updated because: #{e}"]
