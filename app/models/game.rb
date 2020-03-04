@@ -32,6 +32,20 @@ class Game < ApplicationRecord
     game.frames.build(number: 1).save if game.present?
   end
 
+  def total_score
+    self.frames.sum(:score)
+  end
+
+  def individual_frame_score
+    score_hash = {}
+
+    self.frames.ordered_by_number.each do |frame|
+      score_hash[frame.number] = frame.slice([:score, :first_roll, :second_roll]) if frame.first_roll.present?
+    end
+
+    score_hash
+  end
+
   private
 
   def frames_limit_reached?
